@@ -57,6 +57,7 @@ class CandidatureController extends Controller
     public function show($id)
     {
         $candidature = Candidature::find($id);
+        $this->authorize('view', $candidature);
 
         if (!$candidature) {
             return response()->json(['message' => 'Candidature non trouvée'], 404);

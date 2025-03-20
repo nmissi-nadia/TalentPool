@@ -15,48 +15,47 @@ use App\Http\Controllers\Api\ApiController;
 |
 */
 
+// Authentification et Sécurité
 Route::post("register", [ApiController::class, "register"]);
 Route::post("login", [ApiController::class, "login"]);
+Route::post("password/reset", [ApiController::class, "resetPassword"]);
 
+// Gestion des Annonces
 Route::group([
-    "middleware" => ["auth:api","checkrole:admin"]
-], function(){
-
-    Route::get("profile", [ApiController::class, "profile"]);
-    Route::get("refresh", [ApiController::class, "refreshToken"]);
-    Route::get("logout", [ApiController::class, "logout"]);
-
-    Route::apiResource("candidatures", CandidatureController::class);
-    Route::apiResource("annonces", AnnonceController::class);
-    Route::apiResource("users", UserController::class);
-    // 
-
+    "middleware" => ["auth:api", "checkrole:recruteur"]
+], function() {
+    Route::post("annonces", [AnnonceController::class, "store"]); // Ajouter une annonce
+    Route::put("annonces/{id}", [AnnonceController::class, "update"]); // Modifier une annonce
+    Route::delete("annonces/{id}", [AnnonceController::class, "destroy"]); // Supprimer une annonce
 });
+
+// Candidatures
 Route::group([
-    "middleware" => ["auth:api","checkrole:recruteur"]
-], function(){
-
-    Route::get("profile", [ApiController::class, "profile"]);
-    Route::get("refresh", [ApiController::class, "refreshToken"]);
-    Route::get("logout", [ApiController::class, "logout"]);
-
-    Route::apiResource("candidatures", CandidatureController::class);
-    Route::apiResource("annonces", AnnonceController::class);
-    Route::apiResource("users", UserController::class);
-    // 
-
+    "middleware" => ["auth:api", "checkrole:candidat"]
+], function() {
+    Route::post("candidatures", [CandidatureController::class, "store"]); // Postuler à une annonce
+    Route::delete("candidatures/{id}", [CandidatureController::class, "destroy"]); // Retirer une candidature
 });
+
+// Suivi des Candidatures
 Route::group([
-    "middleware" => ["auth:api","checkrole:candidat"]
-], function(){
+    "middleware" => ["auth:api", "checkrole:recruteur"]
+], function() {
+    Route::put("candidatures/{id}/status", [CandidatureController::class, "updateStatus"]); // Mettre à jour le statut d’une candidature
+});
 
-    Route::get("profile", [ApiController::class, "profile"]);
-    Route::get("refresh", [ApiController::class, "refreshToken"]);
-    Route::get("logout", [ApiController::class, "logout"]);
+// Récupérer les annonces pour les candidats
+Route::group([
+    "middleware" => ["auth:api", "checkrole:candidat"]
+], function() {
+    Route::get("annonces", [AnnonceController::class, "index"]); // Récupérer la liste des annonces
+    Route::get("annonces/{id}", [AnnonceController::class, "show"]); // Détails d'une annonce
+});
 
-    Route::apiResource("candidatures", CandidatureController::class);
-    Route::apiResource("annonces", AnnonceController::class);
-    Route::apiResource("users", UserController::class);
-    // 
-
+// Statistiques et Rapports
+Route::group([
+    "middleware" => ["auth:api", "checkrole:admin"]
+], function() {
+    Route::get("stats/annonces", [StatsController::class, "annonces"]); // Statistiques sur les annonces
+    Route::get("stats/candidatures", [StatsController::class, "candidatures"]); // Statistiques sur les candidatures
 });

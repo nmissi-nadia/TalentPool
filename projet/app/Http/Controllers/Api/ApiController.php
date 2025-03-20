@@ -43,7 +43,7 @@ class ApiController extends Controller
         // data validation
         $request->validate([
             "email" => "required|email",
-            "password" => "required"
+            "password" => "required",
         ]);
 
         // JWTAuth

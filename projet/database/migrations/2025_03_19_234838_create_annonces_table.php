@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('annonces', function (Blueprint $table) {
             $table->id();
+            $table->string('titre');
+            $table->text('description');
+            $table->foreignId('recruteur_id')->constrained('users')->onDelete('cascade');
+            $table->enum('statut', ['ouverte', 'fermée'])->default('ouverte');
             $table->timestamps();
         });
     }

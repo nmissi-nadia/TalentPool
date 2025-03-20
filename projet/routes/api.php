@@ -3,6 +3,9 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ApiController;
+use App\Http\Controllers\Api\AnnonceController;
+use App\Http\Controllers\Api\CandidatureController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -22,7 +25,7 @@ Route::post("password/reset", [ApiController::class, "resetPassword"]);
 
 // Gestion des Annonces
 Route::group([
-    "middleware" => ["auth:api", "checkrole:recruteur"]
+    "middleware" => ["auth:api", "check.role:recruteur"]
 ], function() {
     Route::post("annonces", [AnnonceController::class, "store"]); // Ajouter une annonce
     Route::put("annonces/{id}", [AnnonceController::class, "update"]); // Modifier une annonce
@@ -31,7 +34,7 @@ Route::group([
 
 // Candidatures
 Route::group([
-    "middleware" => ["auth:api", "checkrole:candidat"]
+    "middleware" => ["auth:api", "check.role:candidat"]
 ], function() {
     Route::post("candidatures", [CandidatureController::class, "store"]); // Postuler à une annonce
     Route::delete("candidatures/{id}", [CandidatureController::class, "destroy"]); // Retirer une candidature
@@ -39,14 +42,14 @@ Route::group([
 
 // Suivi des Candidatures
 Route::group([
-    "middleware" => ["auth:api", "checkrole:recruteur"]
+    "middleware" => ["auth:api", "check.role:recruteur"]
 ], function() {
     Route::put("candidatures/{id}/status", [CandidatureController::class, "updateStatus"]); // Mettre à jour le statut d’une candidature
 });
 
 // Récupérer les annonces pour les candidats
 Route::group([
-    "middleware" => ["auth:api", "checkrole:candidat"]
+    "middleware" => ["auth:api", "check.role:candidat"]
 ], function() {
     Route::get("annonces", [AnnonceController::class, "index"]); // Récupérer la liste des annonces
     Route::get("annonces/{id}", [AnnonceController::class, "show"]); // Détails d'une annonce
@@ -54,7 +57,7 @@ Route::group([
 
 // Statistiques et Rapports
 Route::group([
-    "middleware" => ["auth:api", "checkrole:admin"]
+    "middleware" => ["auth:api", "check.role:admin"]
 ], function() {
     Route::get("stats/annonces", [StatsController::class, "annonces"]); // Statistiques sur les annonces
     Route::get("stats/candidatures", [StatsController::class, "candidatures"]); // Statistiques sur les candidatures

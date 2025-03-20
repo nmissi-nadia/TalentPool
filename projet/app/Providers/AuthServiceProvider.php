@@ -15,9 +15,9 @@ class AuthServiceProvider extends ServiceProvider
      *
      * @var array<class-string, class-string>
      */
-    protected $policies = [
-        Candidature::class => CandidaturePolicy::class,
-    ];
+    // protected $policies = [
+    //     Candidature::class => CandidaturePolicy::class,
+    // ];
     // Ajouter Gate
 
     /**

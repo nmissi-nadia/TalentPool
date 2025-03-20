@@ -37,7 +37,16 @@ class AnnonceController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'titre' => 'required|string|max:255',
+            'description' => 'required|string',
+            'statut' => 'required|in:active,fermee',
+            'id_recruteur' => 'required|exists:users,id',
+        ]);
+
+        $annonce = Annonce::create($validated);
+
+        return response()->json($annonce, 201);
     }
 
     /**

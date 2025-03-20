@@ -98,4 +98,28 @@ class ApiController extends Controller
             "message" => "Deconnexion reussie"
         ]);
     }
+    // Reset Password API (POST)
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            "email" => "required|email"
+        ]);
+
+        $user = User::where("email", $request->email)->first();
+
+        if (!$user) {
+            return response()->json([
+                "status" => false,
+                "message" => "Utilisateur non trouvé"
+            ]);
+        }
+
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return response()->json([
+            "status" => true,
+            "message" => "Mot de passe reinitialisé avec succès"
+        ]);
+    }
 }

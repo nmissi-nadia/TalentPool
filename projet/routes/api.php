@@ -23,10 +23,44 @@ Route::post("register", [ApiController::class, "register"]);
 Route::post("login", [ApiController::class, "login"]);
 
 Route::group([
-    "middleware" => ["auth:api"]
+    "middleware" => ["auth:api","checkrole:admin"]
 ], function(){
 
     Route::get("profile", [ApiController::class, "profile"]);
     Route::get("refresh", [ApiController::class, "refreshToken"]);
     Route::get("logout", [ApiController::class, "logout"]);
+
+    Route::apiResource("candidatures", CandidatureController::class);
+    Route::apiResource("annonces", AnnonceController::class);
+    Route::apiResource("users", UserController::class);
+    // 
+
+});
+Route::group([
+    "middleware" => ["auth:api","checkrole:recruteur"]
+], function(){
+
+    Route::get("profile", [ApiController::class, "profile"]);
+    Route::get("refresh", [ApiController::class, "refreshToken"]);
+    Route::get("logout", [ApiController::class, "logout"]);
+
+    Route::apiResource("candidatures", CandidatureController::class);
+    Route::apiResource("annonces", AnnonceController::class);
+    Route::apiResource("users", UserController::class);
+    // 
+
+});
+Route::group([
+    "middleware" => ["auth:api","checkrole:candidat"]
+], function(){
+
+    Route::get("profile", [ApiController::class, "profile"]);
+    Route::get("refresh", [ApiController::class, "refreshToken"]);
+    Route::get("logout", [ApiController::class, "logout"]);
+
+    Route::apiResource("candidatures", CandidatureController::class);
+    Route::apiResource("annonces", AnnonceController::class);
+    Route::apiResource("users", UserController::class);
+    // 
+
 });

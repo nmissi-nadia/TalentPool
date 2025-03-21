@@ -54,13 +54,13 @@ Route::group([
     "middleware" => ["auth:api", "check.role:candidat"]
 ], function() {
     Route::get("annonces", [AnnonceController::class, "index"]); 
-    Route::get("annonces/{id}", [AnnonceController::class, "show"]); // Détails d'une annonce
+    Route::get("annonces/{id}", [AnnonceController::class, "show"]); 
 });
 
 // Statistiques et Rapports
-// Route::group([
-//     "middleware" => ["auth:api", "check.role:admin"]
-// ], function() {
-//     Route::get("stats/annonces", [StatsController::class, "annonces"]); // Statistiques sur les annonces
-//     Route::get("stats/candidatures", [StatsController::class, "candidatures"]); // Statistiques sur les candidatures
-// });
+Route::group([
+    "middleware" => ["auth:api", "check.role:admin,recruteur"]
+], function() {
+    Route::get("stats/annonces", [AnnonceController::class, "stats"]); 
+    Route::get("stats/candidatures", [CandidatureController::class, "stats"]);
+});

@@ -22,8 +22,10 @@ use App\Http\Controllers\Api\CandidatureController;
 Route::post("register", [ApiController::class, "register"]);
 Route::post("login", [ApiController::class, "login"]);
 Route::post("password/reset", [ApiController::class, "resetPassword"]);
+// Déconnexion avec middleware auth:api
+Route::post("logout", [ApiController::class, "logout"])->middleware("auth:api");
 
-// Gestion des Annonces
+// Gestion des Annonces pass
 Route::group([
     "middleware" => ["auth:api", "check.role:recruteur"]
 ], function() {
@@ -44,21 +46,21 @@ Route::group([
 Route::group([
     "middleware" => ["auth:api", "check.role:recruteur"]
 ], function() {
-    Route::put("candidatures/{id}/status", [CandidatureController::class, "updateStatus"]); // Mettre à jour le statut d’une candidature
+    Route::put("candidatures/{id}/status", [CandidatureController::class, "updateStatus"]); 
 });
 
 // Récupérer les annonces pour les candidats
 Route::group([
     "middleware" => ["auth:api", "check.role:candidat"]
 ], function() {
-    Route::get("annonces", [AnnonceController::class, "index"]); // Récupérer la liste des annonces
+    Route::get("annonces", [AnnonceController::class, "index"]); 
     Route::get("annonces/{id}", [AnnonceController::class, "show"]); // Détails d'une annonce
 });
 
 // Statistiques et Rapports
-Route::group([
-    "middleware" => ["auth:api", "check.role:admin"]
-], function() {
-    Route::get("stats/annonces", [StatsController::class, "annonces"]); // Statistiques sur les annonces
-    Route::get("stats/candidatures", [StatsController::class, "candidatures"]); // Statistiques sur les candidatures
-});
+// Route::group([
+//     "middleware" => ["auth:api", "check.role:admin"]
+// ], function() {
+//     Route::get("stats/annonces", [StatsController::class, "annonces"]); // Statistiques sur les annonces
+//     Route::get("stats/candidatures", [StatsController::class, "candidatures"]); // Statistiques sur les candidatures
+// });

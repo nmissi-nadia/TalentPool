@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Models\Candidature;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 class CandidatureController extends Controller
@@ -21,12 +22,13 @@ class CandidatureController extends Controller
     public function create(Request $request)
     {
         $validated = $request->validate([
-            'id_annonce' => 'required|exists:annonces,id',
-            'id_candidat' => 'required|exists:users,id',
+            'annonce_id' => 'required|exists:annonces,id',
             'cv' => 'required|string',
             'lettre_motivation' => 'required|string',
             'statut' => 'required|in:en_attente,acceptee,refusee',
         ]);
+
+        $validated['candidat_id'] = auth()->user()->id;
 
         $candidature = Candidature::create($validated);
 
@@ -39,12 +41,13 @@ class CandidatureController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'id_annonce' => 'required|exists:annonces,id',
-            'id_candidat' => 'required|exists:users,id',
+            'annonce_id' => 'required|exists:annonces,id',
             'cv' => 'required|string',
             'lettre_motivation' => 'required|string',
-            'statut' => 'required|in:en_attente,acceptee,refusee',
+            'statut' => 'required|in:en attente,s,refusée',
         ]);
+
+        $validated['candidat_id'] = auth()->user()->id;
 
         $candidature = Candidature::create($validated);
 
@@ -116,5 +119,19 @@ class CandidatureController extends Controller
         $candidature->delete();
 
         return response()->json(['message' => 'Candidature supprimée avec succès'], 200);
+    }
+    // fonction pour affiché statistique des candidature en utilisant query builder en calcul aussi le ombre total des candidats qui ont postuler
+    public function stats()
+    {
+        $stats = Candidature::select('statut', DB::raw('COUNT(*) as count'))    
+            ->groupBy('statut')
+            ->get();
+
+        $total = Candidature::count();
+
+        return response()->json([
+            'statistiques par statut' => $stats,
+            'total candidatures' => $total
+        ], 200);
     }
 }

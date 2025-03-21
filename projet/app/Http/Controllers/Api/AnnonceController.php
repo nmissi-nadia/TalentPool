@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Models\Annonce;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 class AnnonceController extends Controller
@@ -23,13 +24,17 @@ class AnnonceController extends Controller
         $validated = $request->validate([
             'titre' => 'required|string|max:255',
             'description' => 'required|string',
-            'statut' => 'required|in:active,fermee',
-            'id_recruteur' => 'required|exists:users,id',
+            'statut' => 'required|in:ouverte,fermée',
         ]);
 
-        $annonce = Annonce::create($validated);
+        $validated['id_recruteur'] = auth()->user()->id;
 
-        return response()->json($annonce, 201);
+        try {
+            $annonce = Annonce::create($validated);
+            return response()->json($annonce, 201);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -40,13 +45,17 @@ class AnnonceController extends Controller
         $validated = $request->validate([
             'titre' => 'required|string|max:255',
             'description' => 'required|string',
-            'statut' => 'required|in:active,fermee',
-            'id_recruteur' => 'required|exists:users,id',
+            'statut' => 'required|in:ouverte,fermée',
         ]);
 
-        $annonce = Annonce::create($validated);
+        $validated['recruteur_id'] = auth()->user()->id;
 
-        return response()->json($annonce, 201);
+        try {
+            $annonce = Annonce::create($validated);
+            return response()->json($annonce, 201);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -85,7 +94,7 @@ class AnnonceController extends Controller
         $validated = $request->validate([
             'titre' => 'string|max:255',
             'description' => 'string',
-            'statut' => 'in:active,fermee',
+            'statut' => 'in:ouverte,fermée',
         ]);
 
         $annonce->update($validated);

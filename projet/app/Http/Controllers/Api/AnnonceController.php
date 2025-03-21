@@ -117,4 +117,18 @@ class AnnonceController extends Controller
 
         return response()->json(['message' => 'Annonce supprimée avec succès'], 200);
     }
+    // fonction pour affiché statistique des annonces en utilisant query builder
+    public function stats()
+    {
+        $stats = Annonce::select('statut', DB::raw('COUNT(*) as count'))    
+            ->groupBy('statut')
+            ->get();
+
+        $total = Annonce::count();
+
+        return response()->json([
+            'statistiques par statut' => $stats,
+            'total annonces' => $total
+        ], 200);
+    }
 }
